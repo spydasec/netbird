@@ -158,7 +158,7 @@ func TestPeer_StalledSubscriberDoesNotBlockPeerLifecycle(t *testing.T) {
 
 func publishOnline(relay *Relay, name string) *Peer {
 	peer := NewPeer(relay.metrics, messages.HashID(name), messages.CurrentProtocolVersion, newScriptedConn(), relay.store, relay.notifier)
-	relay.store.AddPeer(peer)
+	_, _ = relay.store.AddPeer(peer)
 	relay.notifier.PeerCameOnline(peer.ID())
 	return peer
 }
@@ -172,7 +172,7 @@ func publishOffline(relay *Relay, peer *Peer) {
 
 func deliverSubscription(t *testing.T, conn *scriptedConn, ids []messages.PeerID) {
 	t.Helper()
-	frames, err := messages.MarshalSubPeerStateMsg(ids)
+	frames, err := messages.MarshalSubPeerStateMsg(ids, conn.MaxMessageSize())
 	require.NoError(t, err)
 	for _, frame := range frames {
 		conn.deliver(t, frame)

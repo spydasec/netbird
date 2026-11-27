@@ -989,6 +989,12 @@ func (g *BundleGenerator) addCommonConfigFields(configContent *strings.Builder) 
 		configContent.WriteString(fmt.Sprintf("SSHSessionRecorder: %s\n", g.anonymizer.AnonymizeIPString(g.internalConfig.SSHSessionRecorder)))
 		configContent.WriteString(fmt.Sprintf("DisableRecorderBanner: %v\n", g.internalConfig.DisableRecorderBanner))
 	}
+	if g.internalConfig.ServerVNCAllowed != nil {
+		configContent.WriteString(fmt.Sprintf("ServerVNCAllowed: %v\n", *g.internalConfig.ServerVNCAllowed))
+	}
+	if g.internalConfig.DisableVNCApproval != nil {
+		configContent.WriteString(fmt.Sprintf("DisableVNCApproval: %v\n", *g.internalConfig.DisableVNCApproval))
+	}
 
 	configContent.WriteString(fmt.Sprintf("DisableClientRoutes: %v\n", g.internalConfig.DisableClientRoutes))
 	configContent.WriteString(fmt.Sprintf("DisableServerRoutes: %v\n", g.internalConfig.DisableServerRoutes))
@@ -1180,6 +1186,11 @@ func (g *BundleGenerator) maskSecrets() {
 
 	if g.syncResponse.NetbirdConfig.Relay != nil {
 		g.syncResponse.NetbirdConfig.Relay.TokenPayload = maskedValue
+	}
+
+	// The auth token is a credential and names the peer's keys, so it is masked even without anonymizing.
+	if len(g.syncResponse.NetbirdConfig.AuthToken) > 0 {
+		g.syncResponse.NetbirdConfig.AuthToken = []byte(maskedValue)
 	}
 
 	for i := range g.syncResponse.NetbirdConfig.Turns {

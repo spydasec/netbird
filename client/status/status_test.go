@@ -242,6 +242,10 @@ var overview = OutputOverview{
 		Enabled:  false,
 		Sessions: []SSHSessionOutput{},
 	},
+	VNCServerState: VNCServerStateOutput{
+		Enabled:  false,
+		Sessions: []VNCSessionOutput{},
+	},
 }
 
 func TestConversionFromFullStatusToOutputOverview(t *testing.T) {
@@ -407,7 +411,11 @@ func TestParsingToJSON(t *testing.T) {
 		    "enabled":false,
 			"sessions":[]
 		  },
-		  "birddropEnabled": false
+		  "birddropEnabled": false,
+		  "vncServer":{
+		    "enabled":false,
+			"sessions":[]
+		  }
         }`
 	// @formatter:on
 
@@ -517,6 +525,9 @@ sshServer:
     enabled: false
     sessions: []
 birddropEnabled: false
+vncServer:
+    enabled: false
+    sessions: []
 `
 
 	assert.Equal(t, expectedYAML, yaml)
@@ -588,6 +599,7 @@ Quantum resistance: false
 Lazy connection: false
 SSH Server: Disabled
 Birddrop: Disabled
+VNC Server: Disabled
 Networks: 10.10.0.0/24
 Peers count: 2/2 Connected
 `, lastConnectionUpdate1, lastHandshake1, lastConnectionUpdate2, lastHandshake2, runtime.GOOS, runtime.GOARCH, overview.CliVersion, overview.WgPort)
@@ -615,6 +627,7 @@ Quantum resistance: false
 Lazy connection: false
 SSH Server: Disabled
 Birddrop: Disabled
+VNC Server: Disabled
 Networks: 10.10.0.0/24
 Peers count: 2/2 Connected
 `
